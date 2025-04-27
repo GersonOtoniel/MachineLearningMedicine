@@ -1,4 +1,4 @@
-install.packages("glmnet")
+#install.packages("glmnet")
 library(glmnet)
 
 
@@ -29,6 +29,27 @@ require(glmnet)
 glm_model = cv.glmnet(x_train, y_train, alpha=1, nfolds=10) 
 lambda.min = glm_model$lambda.min 
 glm_coef = round(coef(glm_model,s= lambda.min),2)
-plot(glm_model)
+#plot(glm_model)
+plot(glmnet(x_train,y_train, family="gaussian", alpha=1),"lambda",label=T, main="") #para la regularizacion
 
-plot(glmnet(x_train,y_train, family="gaussian", alpha=1),"lambda",label=T, main="")
+glm_pred = round(predict(glm_model, x_test, type="response"),0) #creacion del vector
+
+#install.packages("caret")
+require(caret) 
+confusionMatrix(as.factor(glm_pred),as.factor(y_test)) #matriz de confusion
+
+
+
+#probando nuevos datos
+thickness = 8
+cell_size = 7
+cell_shape = 8
+adhesion = 5
+epithelial_size = 5
+bare_nuclei = 7
+bland_cromatin = 9
+normal_nucleoli = 8
+mitoses = 10
+new_data = c(thickness,cell_size,cell_shape,adhesion,epithelial_size,bare_nuclei,bland_cromatin,normal_nucleoli ,mitoses) 
+new_pred_glm = predict(glm_model ,data.matrix(t(new_data)),type="response") 
+print(new_pred_glm)
